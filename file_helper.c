@@ -135,12 +135,12 @@ unsigned long long  file_at(const char * path)
     return to_milliseconds(stat.atime);
 }
 
-int  file_read(void *file_, unsigned long long offset, unsigned char *data, unsigned int size) 
+int  file_read(void *file_, unsigned long long offset, unsigned char *data, size_t size) 
 {
     return kernel_read((struct file *) file_, data, size, &offset);
 }  
 
-int  file_write(void * file_, unsigned long long offset, unsigned char *data, unsigned int size) 
+int  file_write(void * file_, unsigned long long offset, unsigned char *data, size_t size) 
 {
     return kernel_write((struct file *) file_, data, size, &offset);
 }

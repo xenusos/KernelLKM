@@ -117,7 +117,7 @@ void * load_pe(void * data, size_t length, void **entrypoint)
 	
 	sec = (PIMAGE_SECTION_HEADER)((uint64_t)&ntheader->OptionalHeader64 + ntheader->FileHeader.SizeOfOptionalHeader);
 	sections = ntheader->FileHeader.NumberOfSections;
-    for (x = 0; x < setions; x++)
+    for (x = 0; x < sections; x++)
         memcpy((void *)((uint64_t)baddr + sec[x].VirtualAddress), (const void *) ((uint64_t)data + sec[x].PointerToRawData), sec[x].SizeOfRawData);
 	
 	//TODO: check length

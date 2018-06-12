@@ -11,6 +11,7 @@
 #include <linux/kthread.h>
 #include <linux/kallsyms.h>
 #include <asm/fpu/api.h>
+#include <linux/delay.h>
 
 #include "file_helper.h"
 #include "pe_headers.h"
@@ -174,6 +175,13 @@ int dbg_print(const char * msg)
     return printk("%s", msg); //puts isn't a symbol?
 }
 
+void dbg_panic(const char * msg)
+{
+    printk("%s\n", msg); //puts isn't a symbol?
+    while (1)
+        ssleep(2000);
+}
+
 void test_function(int a_1, int a_2, int a_3, int a_4, int a_5, int a_6, int a_7, int a_8, int a_9, int a_10, int a_11, int a_12)
 {
     printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n",
@@ -183,7 +191,7 @@ void test_function(int a_1, int a_2, int a_3, int a_4, int a_5, int a_6, int a_7
 void init_dbg(bootstrap_t * functions)
 {
     functions->dbg.test_function = test_function;
-    functions->dbg.panic         = panic;
+    functions->dbg.panic         = dbg_panic; //= panic;
     functions->dbg.print         = dbg_print;
 }
 
