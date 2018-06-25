@@ -16,6 +16,9 @@
 
 #include "file_helper.h"
 
+#define PUSH_ADDR_LIMIT     oldfs = get_fs();  set_fs(get_ds());
+#define POP_ADDR_LIMIT      set_fs(oldfs);
+
 unsigned long long to_milliseconds(struct timespec tv)
 {
     return (tv.tv_sec * 1000) + (tv.tv_nsec / 1000000);

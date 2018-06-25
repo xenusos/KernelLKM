@@ -16,4 +16,4 @@
 
 #include <xenus.h>                // generic xenus types 
 #include <_/_generic_bootstrap.h> // static functions to provide to the kernel
-#include <x_linux.h>              // i fucked something up in kernel.xdll so this now seperate
+#include <x_linux.h>              // i fucked something up in kernel.xdll so this now separate

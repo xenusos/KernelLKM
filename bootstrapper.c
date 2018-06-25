@@ -93,7 +93,7 @@ void threading_preempt_enable(void)
 
 void threading_preempt_disable(void)
 {
-    preempt_enable();
+    preempt_disable();
 }
 
 void threading_kernel_fpu_begin(void)
@@ -108,10 +108,24 @@ void threading_kernel_fpu_end(void)
     kernel_fpu_end();
 }
 
+void threading___kernel_fpu_begin(void)
+{
+    //printk("[CALL TO] kernel_fpu_begin\n");
+    __kernel_fpu_begin();
+}
+
+void threading___kernel_fpu_end(void)
+{
+    //printk("[CALL TO] kernel_fpu_end\n");
+    __kernel_fpu_end();
+}
+
 void init_cpu(bootstrap_t * functions)
 {
     functions->cpu.kernel_fpu_begin         = threading_kernel_fpu_begin;
     functions->cpu.kernel_fpu_end           = threading_kernel_fpu_end;
+    functions->cpu.__kernel_fpu_begin       = threading___kernel_fpu_begin;
+    functions->cpu.__kernel_fpu_end         = threading___kernel_fpu_end;
     functions->cpu.create_thread_unsafe     = threading_create_thread_unsafe;
     functions->cpu.get_current_pid          = threading_get_pid;
     functions->cpu._current                 = threading__current;
@@ -177,9 +191,13 @@ int dbg_print(const char * msg)
 
 void dbg_panic(const char * msg)
 {
+#if 0
+    panic(msg);
+#else
     printk("%s\n", msg); //puts isn't a symbol?
     while (1)
         ssleep(2000);
+#endif
 }
 
 void test_function(int a_1, int a_2, int a_3, int a_4, int a_5, int a_6, int a_7, int a_8, int a_9, int a_10, int a_11, int a_12)
