@@ -3,15 +3,12 @@
     Author: Reece W.
     License: All Rights Reserved J. Reece Wilson
 */
-
-
 #include "common.h"
 
 #include <linux/fs.h>
 #include <asm/segment.h>
 #include <asm/uaccess.h>
 #include <linux/mm.h> 
-
 #include <linux/buffer_head.h>
 
 #include "file_helper.h"
