@@ -88,7 +88,9 @@ thread_storage_data_p  threading_tls(void)
 
 void threading_preempt_enable(void)
 {
-    preempt_enable_no_resched();
+	barrier();
+	if (unlikely(preempt_count_dec_and_test()))
+		__preempt_schedule();
 }
 
 void threading_preempt_disable(void)
@@ -206,20 +208,21 @@ void test_function(size_t a_1, size_t a_2, size_t a_3, size_t a_4, size_t a_5, s
            a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
 	if (a_1 == 69)
 		printk("response %p\n", ((void *(*)(size_t a_1,
-		size_t, 
-		size_t,
-		size_t,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ,
-		size_t ))a_2)(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+											size_t, 
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t,
+											size_t))a_2)
+								(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
 }
 
 void init_dbg(bootstrap_t * functions)

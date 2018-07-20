@@ -13,9 +13,6 @@
 
 #include "file_helper.h"
 
-#define PUSH_ADDR_LIMIT     oldfs = get_fs();  set_fs(get_ds());
-#define POP_ADDR_LIMIT      set_fs(oldfs);
-
 unsigned long long to_milliseconds(struct timespec tv)
 {
     return (tv.tv_sec * 1000) + (tv.tv_nsec / 1000000);
@@ -40,13 +37,9 @@ void * file_open(const char *path, int flags, int rights)
 {
     int err = 0;
     struct file *filp = NULL;
-    mm_segment_t oldfs;
-
-    oldfs = get_fs();
-    set_fs(get_ds());
+	
     filp = filp_open(path, flags, rights);
-    set_fs(oldfs);
-    
+
     if (IS_ERR(filp)) {
         err = PTR_ERR(filp);
         return NULL;
@@ -55,18 +48,22 @@ void * file_open(const char *path, int flags, int rights)
     return (void *) filp;
 }
 
-long  file_length(const char *path)
+long file_length(const char *path)
 {
     int ret;
-    mm_segment_t oldfs;
     struct kstat stat;
-    
-    oldfs = get_fs();
-    set_fs(get_ds());
-    ret = vfs_stat(path, &stat);
-    set_fs(oldfs);
-    
-    if (ret) return -1;
+	struct file * f;
+
+	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+		return -1;
+	
+	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+	{
+		filp_close(f, 0);
+		return -1;
+	}
+	
+    filp_close(f, 0);
     
     return stat.size;
 }
@@ -74,15 +71,19 @@ long  file_length(const char *path)
 long  file_mode(const char * path)
 {
     int ret;
-    mm_segment_t oldfs;
     struct kstat stat;
-    
-    oldfs = get_fs();
-    set_fs(get_ds());
-    ret = vfs_stat(path, &stat);
-    set_fs(oldfs);
-    
-    if (ret) return -1;
+	struct file * f;
+
+	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+		return -1;
+	
+	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+	{
+		filp_close(f, 0);
+		return -1;
+	}
+	
+    filp_close(f, 0);
     
     return stat.mode;
 }
@@ -90,15 +91,19 @@ long  file_mode(const char * path)
 unsigned long long  file_ct(const char * path)
 {
     int ret;
-    mm_segment_t oldfs;
     struct kstat stat;
-    
-    oldfs = get_fs();
-    set_fs(get_ds());
-    ret = vfs_stat(path, &stat);
-    set_fs(oldfs);
-    
-    if (ret) return -1;
+	struct file * f;
+
+	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+		return -1;
+	
+	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+	{
+		filp_close(f, 0);
+		return -1;
+	}
+	
+    filp_close(f, 0);
     
     return to_milliseconds(stat.ctime);
 }
@@ -106,15 +111,19 @@ unsigned long long  file_ct(const char * path)
 unsigned long long  file_mt(const char * path)
 {
     int ret;
-    mm_segment_t oldfs;
     struct kstat stat;
-    
-    oldfs = get_fs();
-    set_fs(get_ds());
-    ret = vfs_stat(path, &stat);
-    set_fs(oldfs);
-    
-    if (ret) return -1;
+	struct file * f;
+
+	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+		return -1;
+	
+	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+	{
+		filp_close(f, 0);
+		return -1;
+	}
+	
+    filp_close(f, 0);
     
     return to_milliseconds(stat.mtime);
 }
@@ -122,16 +131,20 @@ unsigned long long  file_mt(const char * path)
 unsigned long long  file_at(const char * path)
 {
     int ret;
-    mm_segment_t oldfs;
     struct kstat stat;
-    
-    oldfs = get_fs();
-    set_fs(get_ds());
-    ret = vfs_stat(path, &stat);
-    set_fs(oldfs);
-    
-    if (ret) return -1;
-    
+	struct file * f;
+
+	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+		return -1;
+	
+	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+	{
+		filp_close(f, 0);
+		return -1;
+	}
+	
+    filp_close(f, 0);
+		
     return to_milliseconds(stat.atime);
 }
 
