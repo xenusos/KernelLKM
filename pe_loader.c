@@ -1,7 +1,7 @@
 /*
-    Purpose: I don't even care anymore. Just load the fucking PE. This implementation is no longer used within the kernel itself. TODO: port the other PE loader.
-    Author: Reece W.
-    License: All Rights Reserved J. Reece Wilson
+	Purpose: I don't even care anymore. Just load the fucking PE. This implementation is no longer used within the kernel itself. TODO: port the other PE loader.
+	Author: Reece W.
+	License: All Rights Reserved J. Reece Wilson
 */
 
 #include <linux/types.h> 
@@ -24,9 +24,9 @@
 #define RVA(type, off) (type)((uint64_t)baddr + off) 
 	
 void relocate_kern(
-    void * baddr,
+	void * baddr,
 	PIMAGE_NT_HEADERS ntheader,
-    uint64_t difference)
+	uint64_t difference)
 {
 	size_t base;
 	size_t items;
@@ -82,51 +82,54 @@ void relocate_kern(
 
 void * load_pe(void * data, size_t length, void **entrypoint)
 { 
-    void * baddr;
-    uint64_t difference;
-    PDOS_HEADER dheader;
-    PIMAGE_NT_HEADERS ntheader;
-    int x;
+	void * baddr;
+	uint64_t difference;
+	PDOS_HEADER dheader;
+	PIMAGE_NT_HEADERS ntheader;
+	uint64_t image_size;
+	int x;
   
-    dheader		= (PDOS_HEADER)data;
-    ntheader	= (PIMAGE_NT_HEADERS)((uint64_t)data + dheader->e_lfanew);
-    
-    baddr		= __vmalloc(ntheader->OptionalHeader64.SizeOfImage, GFP_KERNEL, PAGE_KERNEL_EXEC);
+	dheader		= (PDOS_HEADER)data;
+	ntheader	= (PIMAGE_NT_HEADERS)((uint64_t)data + dheader->e_lfanew);
+	
+	image_size	= ntheader->OptionalHeader64.SizeOfImage;
+	
+	baddr		= memset(__vmalloc(image_size, GFP_KERNEL, PAGE_KERNEL_EXEC), 0, image_size);
+	
+	if (!baddr)
+		return NULL;
+	
+	//TODO: check pe sig
+	//TODO: check mz sig
 
-    if (!baddr)
-        return NULL;
-    
-    //TODO: check pe sig
-    //TODO: check mz sig
-
-    difference = (uint64_t) baddr - (uint64_t) ntheader->OptionalHeader64.ImageBase;
-    
-    //Move header
-    memcpy((void *)baddr, (const void *) data, ntheader->OptionalHeader64.SizeOfHeaders);
-    
-    //Update pointers
-    dheader = (PDOS_HEADER)baddr;
-    ntheader = (PIMAGE_NT_HEADERS)((uint64_t)baddr + dheader->e_lfanew);
-    
-    //Update PE/DOS headers 
-    ntheader->OptionalHeader64.ImageBase = baddr;
-    
-    //Load sections
-    PIMAGE_SECTION_HEADER sec;
+	difference = (uint64_t) baddr - (uint64_t) ntheader->OptionalHeader64.ImageBase;
+	
+	//Move header
+	memcpy((void *)baddr, (const void *) data, ntheader->OptionalHeader64.SizeOfHeaders);
+	
+	//Update pointers
+	dheader = (PDOS_HEADER)baddr;
+	ntheader = (PIMAGE_NT_HEADERS)((uint64_t)baddr + dheader->e_lfanew);
+	
+	//Update PE/DOS headers 
+	ntheader->OptionalHeader64.ImageBase = baddr;
+	
+	//Load sections
+	PIMAGE_SECTION_HEADER sec;
 	size_t sections;
 	
 	sec = (PIMAGE_SECTION_HEADER)((uint64_t)&ntheader->OptionalHeader64 + ntheader->FileHeader.SizeOfOptionalHeader);
 	sections = ntheader->FileHeader.NumberOfSections;
-    for (x = 0; x < sections; x++)
-        memcpy((void *)((uint64_t)baddr + sec[x].VirtualAddress), (const void *) ((uint64_t)data + sec[x].PointerToRawData), sec[x].SizeOfRawData);
+	for (x = 0; x < sections; x++)
+		memcpy((void *)((uint64_t)baddr + sec[x].VirtualAddress), (const void *) ((uint64_t)data + sec[x].PointerToRawData), sec[x].SizeOfRawData);
 	
 	//TODO: check length
-    //TODO: check within range
+	//TODO: check within range
 
 	relocate_kern(baddr, ntheader, difference);																												;
    
-    if (entrypoint)
-        *entrypoint = baddr + ntheader->OptionalHeader.AddressOfEntryPoint;
+	if (entrypoint)
+		*entrypoint = baddr + ntheader->OptionalHeader.AddressOfEntryPoint;
 	
-    return baddr;
+	return baddr;
 }
