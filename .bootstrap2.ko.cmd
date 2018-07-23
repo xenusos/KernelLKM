@@ -1,0 +1,1 @@
+cmd_/root/Development/Bootstrap/bootstrap2.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /root/Development/Bootstrap/bootstrap2.ko /root/Development/Bootstrap/bootstrap2.o /root/Development/Bootstrap/bootstrap2.mod.o ;  true

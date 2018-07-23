@@ -50,18 +50,17 @@ void * file_open(const char *path, int flags, int rights)
 
 long file_length(const char *path)
 {
-    int ret;
     struct kstat stat;
-	struct file * f;
+    struct file * f;
 
-	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
-		return -1;
+    if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+        return -1;
 	
-	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
-	{
-		filp_close(f, 0);
-		return -1;
-	}
+    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    {
+        filp_close(f, 0);
+        return -1;
+    }
 	
     filp_close(f, 0);
     
@@ -70,18 +69,17 @@ long file_length(const char *path)
 
 long  file_mode(const char * path)
 {
-    int ret;
     struct kstat stat;
-	struct file * f;
+    struct file * f;
 
-	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
-		return -1;
+    if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+        return -1;
 	
-	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
-	{
-		filp_close(f, 0);
-		return -1;
-	}
+    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    {
+        filp_close(f, 0);
+        return -1;
+    }
 	
     filp_close(f, 0);
     
@@ -90,18 +88,17 @@ long  file_mode(const char * path)
 
 unsigned long long  file_ct(const char * path)
 {
-    int ret;
     struct kstat stat;
-	struct file * f;
+    struct file * f;
 
-	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
-		return -1;
+    if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+        return -1;
 	
-	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
-	{
-		filp_close(f, 0);
-		return -1;
-	}
+    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    {
+        filp_close(f, 0);
+        return -1;
+    }
 	
     filp_close(f, 0);
     
@@ -110,18 +107,17 @@ unsigned long long  file_ct(const char * path)
 
 unsigned long long  file_mt(const char * path)
 {
-    int ret;
     struct kstat stat;
-	struct file * f;
+    struct file * f;
 
-	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
-		return -1;
+    if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+        return -1;
 	
-	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
-	{
-		filp_close(f, 0);
-		return -1;
-	}
+    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    {
+        filp_close(f, 0);
+        return -1;
+    }
 	
     filp_close(f, 0);
     
@@ -130,18 +126,17 @@ unsigned long long  file_mt(const char * path)
 
 unsigned long long  file_at(const char * path)
 {
-    int ret;
     struct kstat stat;
-	struct file * f;
+    struct file * f;
 
-	if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
-		return -1;
+    if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
+        return -1;
 	
-	if (IS_ERR(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
-	{
-		filp_close(f, 0);
-		return -1;
-	}
+    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    {
+        filp_close(f, 0);
+        return -1;
+    }
 	
     filp_close(f, 0);
 		
