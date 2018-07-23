@@ -19,6 +19,19 @@ static uint32_t ps_length = 0;
 static void * pe_base;
 static void * pe_entrypoint;
 
+bool test_kern_types(void)
+{
+#define TEST_TYPE(type, bytes) if (sizeof(type) != bytes) return false;
+    TEST_TYPE(short, 2)
+    TEST_TYPE(int, 4)
+    TEST_TYPE(long, 8)
+    TEST_TYPE(long long, 8)
+    TEST_TYPE(signed, 4)
+    TEST_TYPE(unsigned, 4)
+#undef TEST_TYPE
+    return true;
+}
+
 int init_portable_structs(void)
 {
     ps_length = ps_buffer_length();
@@ -30,7 +43,7 @@ int init_portable_structs(void)
         return 1;
     }
     
-	ps_initialize();
+    ps_initialize();
     ps_buffer_dump(ps_buffer, ps_length);
     return 0;
 }
@@ -40,7 +53,7 @@ int init_pe(void)
     void * buffer  = 0;  
     void * file = 0;
     long length;
-    
+	
     file = file_open_readonly(BOOTSTRAP_DLL);
     
     if (!file)
@@ -76,8 +89,10 @@ static int __init bs_init(void)
 {
     bootstrap_t functions;
     
-    if (init_portable_structs()) return -1;
-    if (init_pe()) return -2;
+	
+    if (!test_kern_types()) return -1;
+    if (init_portable_structs()) return -2;
+    if (init_pe()) return -3;
     
     printk(KERN_INFO "Xenus starting up...\n");
     
@@ -88,7 +103,7 @@ static int __init bs_init(void)
 }
 
 static void __exit bs_exit(void){
-   printk(KERN_INFO "Xenus OS shutting down!\n");
+    printk(KERN_INFO "Xenus OS shutting down!\n");
 }
 
 MODULE_LICENSE("GPL");
