@@ -1,1 +1,0 @@
-cmd_/root/Development/Bootstrap/bootstrap2.o := ld -m elf_x86_64  -z max-page-size=0x200000   -r -o /root/Development/Bootstrap/bootstrap2.o /root/Development/Bootstrap/entrypoint.o /root/Development/Bootstrap/bootstrapper.o /root/Development/Bootstrap/file_helper.o /root/Development/Bootstrap/pe_loader.o /root/Development/Bootstrap/port_structs.o 
