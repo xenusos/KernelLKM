@@ -56,7 +56,7 @@ long file_length(const char *path)
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
 	
-    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
@@ -75,7 +75,7 @@ long  file_mode(const char * path)
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
 	
-    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
@@ -94,7 +94,7 @@ unsigned long long  file_ct(const char * path)
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
 	
-    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
@@ -113,7 +113,7 @@ unsigned long long  file_mt(const char * path)
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
 	
-    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
@@ -132,7 +132,7 @@ unsigned long long  file_at(const char * path)
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
 	
-    if (!(vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)))
+    if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;

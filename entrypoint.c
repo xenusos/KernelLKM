@@ -67,7 +67,7 @@ int init_pe(void)
     
     if (file_read(file, 0, buffer, length) != length)
     {
-        printk(KERN_INFO "Xenus OS kernel could not be read!\n");
+        printk(KERN_INFO "Xenus OS kernel could not be read! length\n");
         return 1;
     }
     
