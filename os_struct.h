@@ -1,0 +1,1 @@
+int init_os_struct(linux_info_ref info);

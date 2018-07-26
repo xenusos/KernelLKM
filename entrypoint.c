@@ -8,10 +8,11 @@
 #include "pe_loader.h"
 #include "file_helper.h"
 #include "bootstrapper.h"
+#include "os_struct.h" 
 
 #define BOOTSTRAP_DLL "/Xenus/Kernel.xdll"
 
-typedef void(__attribute__((ms_abi)) *startpoint_t)(void *xenos_start, bootstrap_t * bootstrap, void *  security, uint32_t sec_len, void * port_structs, uint32_t port_structs_length);
+typedef void(__attribute__((ms_abi)) *startpoint_t)(void *xenos_start, bootstrap_t * bootstrap, void *  security, uint32_t sec_len, void * port_structs, uint32_t port_structs_length, linux_info_ref info);
 
 static void * ps_buffer = 0;
 static uint32_t ps_length = 0;
@@ -88,8 +89,8 @@ int init_pe(void)
 static int __init bs_init(void)
 {
     bootstrap_t functions;
+	linux_info_t info;
     
-	
     if (!test_kern_types()) return -1;
     if (init_portable_structs()) return -2;
     if (init_pe()) return -3;
@@ -97,8 +98,9 @@ static int __init bs_init(void)
     printk(KERN_INFO "Xenus starting up...\n");
     
     bootstrap_functions(&functions);
-    
-    ((startpoint_t)pe_entrypoint)(pe_base, &functions, NULL, 0, ps_buffer, ps_length);
+	init_os_struct(&info);
+	
+    ((startpoint_t)pe_entrypoint)(pe_base, &functions, NULL, 0, ps_buffer, ps_length, &info);
     return 0;
 }
 
