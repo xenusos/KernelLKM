@@ -98,7 +98,7 @@ static int __init bs_init(void)
     printk(KERN_INFO "Xenus starting up...\n");
     
     bootstrap_functions(&functions);
-	init_os_struct(&info);
+    init_os_struct(&info);
 	
     ((startpoint_t)pe_entrypoint)(pe_base, &functions, NULL, 0, ps_buffer, ps_length, &info);
     return 0;
