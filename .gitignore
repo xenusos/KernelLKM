@@ -5,3 +5,6 @@
 *.cmd
 .tmp_versions
 .tmp_versions/
+modules.order
+*.old
+*.mod.c

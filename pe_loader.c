@@ -63,10 +63,10 @@ void relocate_kern(
 				*((uint32_t *)	(base + reloc.offset)) += (uint32_t) difference;
 				break;
 			case IMAGE_REL_BASED_HIGH:
-				*((int16_t *)	(base + reloc.offset)) += HIWORD(difference);
+				*((uint16_t *)	(base + reloc.offset)) += HIWORD(difference);
 				break;
 			case IMAGE_REL_BASED_LOW:
-				*((int16_t *)	(base + reloc.offset)) += LOWORD(difference);
+				*((uint16_t *)	(base + reloc.offset)) += LOWORD(difference);
 				break;
 			case IMAGE_REL_BASED_ABSOLUTE:
 				break;
