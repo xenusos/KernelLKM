@@ -206,25 +206,10 @@ void dbg_panic(const char * msg)
 
 void test_function(size_t a_1, size_t a_2, size_t a_3, size_t a_4, size_t a_5, size_t a_6, size_t a_7, size_t a_8, size_t a_9, size_t a_10, size_t a_11, size_t a_12)
 {
-    printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n",
-           a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
 	if (a_1 == 69)
-		printk("response %p\n", ((void *(*)(size_t a_1,
-											size_t, 
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t,
-											size_t))a_2)
-								(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+		((void *(*)(size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t))a_2)(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+	else
+		printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n", a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
 }
 
 void init_dbg(bootstrap_t * functions)
