@@ -195,12 +195,12 @@ int dbg_print(const char * msg)
 
 void dbg_panic(const char * msg)
 {
-#if 0
-    panic(msg);
-#else
+#ifdef CONFIG_PANIC_DBG
     printk("%s\n", msg); //puts isn't a symbol?
     while (1)
         ssleep(2000);
+#else
+    panic(msg);
 #endif
 }
 
