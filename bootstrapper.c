@@ -56,7 +56,7 @@ int ms_threading_cb(void *tdata)
     kfree(tdata);
     return callback(data);
 }
-task_k threading_create_thread_unsafe(thread_callback_t callback, void * data, char * name, bool run)
+task_k threading_create_thread_unsafe(thread_callback_t callback, void * data, const char * name, bool run)
 {
     char * buffer;
     
