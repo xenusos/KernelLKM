@@ -41,11 +41,11 @@ void relocate_kern(
 	
 	base_relocation = RVA(PIMAGE_BASE_RELOCATION, dir.VirtualAddress);
 	
+	size_t datadircnt = 0;
 	while (base_relocation->SizeOfBlock) 
 	{
 		map = (uint16_t *)(((uint64_t)(base_relocation)) + sizeof(IMAGE_BASE_RELOCATION)); 
 		items = (base_relocation->SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(IMAGE_RELOC);
-
 		base = RVA(size_t, base_relocation->VirtualAddress);
 
 		// https://github.com/abhisek/Pe-Loader-Sample/blob/master/src/PeLdr.cpp
@@ -75,8 +75,16 @@ void relocate_kern(
 				break;
 			}
 		}
+		
+		datadircnt += base_relocation->SizeOfBlock;
 		base_relocation = (PIMAGE_BASE_RELOCATION)(((size_t)base_relocation) + base_relocation->SizeOfBlock);
+		
+		if (datadircnt == dir.Size)
+			break;
 	}
+	
+	
+	printk("EXIT\n");
 }
 #undef RVA
 
