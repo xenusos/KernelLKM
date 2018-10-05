@@ -82,9 +82,6 @@ void relocate_kern(
 		if (datadircnt == dir.Size)
 			break;
 	}
-	
-	
-	printk("EXIT\n");
 }
 #undef RVA
 
