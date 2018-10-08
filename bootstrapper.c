@@ -143,6 +143,11 @@ void *  mem_execalloc(size_t size)
     return __vmalloc(size, GFP_KERNEL, PAGE_KERNEL_EXEC);
 }
 
+uint64_t  linux_page_to_pfn(void * aa)
+{
+	return page_to_pfn((struct page*)aa);
+}
+
 void init_memory(bootstrap_t * functions)
 {       
     functions->memory.execalloc     = mem_execalloc;  
@@ -156,7 +161,9 @@ void init_memory(bootstrap_t * functions)
     functions->memory.memset        = memset;     
     functions->memory.memmove       = memmove;    
     functions->memory.memcmp        = memcmp;     
-    functions->memory.memscan       = memscan;   
+    functions->memory.memscan       = memscan;  
+    functions->memory.linux_page_to_pfn       = linux_page_to_pfn;  
+	
 }
 
 void init_strings(bootstrap_t * functions)
