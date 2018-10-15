@@ -7,6 +7,6 @@
 #include "common.h"
 
 PS_SRC_FUNC_START
-#include <_/_portable_structs.macros>
+#include <all/_portable_structs.macros>
 PS_SRC_FUNC_END
 PS_SRC_DEFINE_STUBS
