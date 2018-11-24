@@ -47,4 +47,5 @@ int init_os_struct(linux_info_ref info)
     info->LINUX_LDT_BASE_ADDR          = LDT_BASE_ADDR;
     
     info->KERNEL_FREQUENCY = HZ;
+	printk("aaa: %i %i \n", info->KERNEL_FREQUENCY, HZ);
 }

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "shutdown.h"
 
-static shutdown_handler_p shutdown_callback;
+static shutdown_handler_p shutdown_callback = NULL;
 
 void shutdown_set_handler(shutdown_handler_p callback)
 {
@@ -10,5 +10,6 @@ void shutdown_set_handler(shutdown_handler_p callback)
 
 void shutdown_trigger(void)
 {
-	shutdown_callback();
+	if (shutdown_callback)
+		shutdown_callback();
 }
