@@ -3,12 +3,12 @@
     Author: Reece W.
     License: All Rights Reserved J. Reece Wilson
 */
-
 #include "common.h"
 #include "pe_loader.h"
 #include "file_helper.h"
 #include "bootstrapper.h"
 #include "os_struct.h" 
+#include "shutdown.h"
 
 static void * ps_buffer = 0;
 static uint32_t ps_length = 0;
@@ -101,6 +101,7 @@ static int __init bs_init(void)
 
 static void __exit bs_exit(void){
     printk(KERN_INFO "Xenus OS shutting down!\n");
+	shutdown_trigger();
 }
 
 MODULE_LICENSE("GPL");

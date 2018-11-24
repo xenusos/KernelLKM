@@ -16,10 +16,11 @@
 #include "file_helper.h"
 #include "pe_headers.h"
 #include "bootstrapper.h"
+#include "shutdown.h"
 
 mutex_k threading_create_mutex (void)
 {
-    struct mutex * minst = (struct mutex *) kmalloc(sizeof(struct mutex), GFP_KERNEL);
+    struct mutex * minst = (struct mutex *) kmalloc(sizeof(struct mutex), GFP_KERNEL | GFP_ATOMIC);
     if (!minst)
         panic("Xenus kernel requested mutex, Linux said no.");
     mutex_init(minst);
@@ -219,11 +220,17 @@ void test_function(size_t a_1, size_t a_2, size_t a_3, size_t a_4, size_t a_5, s
 		printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n", a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
 }
 
+void dbg_on_reload(void(XENUS_MS_ABI * callback)(void))
+{
+	shutdown_set_handler(callback);
+}
+
 void init_dbg(bootstrap_t * functions)
 {
     functions->dbg.test_function = test_function;
     functions->dbg.panic         = dbg_panic; //= panic;
     functions->dbg.print         = dbg_print;
+	functions->dbg.reload        = dbg_on_reload;
 }
 
 void init_symbols(bootstrap_t * functions)
