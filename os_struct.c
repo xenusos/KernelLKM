@@ -15,7 +15,7 @@
 
 int init_os_struct(linux_info_ref info)
 {
-	info->LINUX_THREAD_SIZE_ORDER      = THREAD_SIZE_ORDER;
+    info->LINUX_THREAD_SIZE_ORDER      = THREAD_SIZE_ORDER;
     info->LINUX_THREAD_SIZE            = THREAD_SIZE;
     info->LINUX_PAGE_SHIFT             = PAGE_SHIFT;
     info->LINUX_PAGE_SIZE              = PAGE_SIZE;

@@ -16,7 +16,7 @@ static uint32_t ps_length = 0;
 static void * pe_base;
 static void * pe_entrypoint;
 
-bool test_kern_types(void)
+static bool test_kern_types(void)
 {
 #define TEST_TYPE(type, bytes) if (sizeof(type) != bytes) return false;
     TEST_TYPE(short, 2)
@@ -29,7 +29,7 @@ bool test_kern_types(void)
     return true;
 }
 
-int init_portable_structs(void)
+static int init_portable_structs(void)
 {
     ps_length = ps_buffer_length();
     ps_buffer = kmalloc(ps_length, GFP_KERNEL | GFP_ATOMIC);
@@ -45,18 +45,18 @@ int init_portable_structs(void)
     return 0;
 }
 
-int init_pe(void)
+static int init_pe(void)
 {
     void * buffer  = 0;  
     void * file = 0;
     long length;
-	
+    
     file = file_open_readonly(BOOTSTRAP_DLL);
     
     if (!file)
     {
         printk(KERN_INFO "Xenus OS kernel not found!\n");
-    	return 1;
+        return 1;
     }
     
     length = file_length(BOOTSTRAP_DLL);
@@ -85,7 +85,7 @@ int init_pe(void)
 static int __init bs_init(void)
 {
     bootstrap_t functions;
-	linux_info_t info;
+    linux_info_t info;
     
     if (!test_kern_types()) return -210;
     if (init_portable_structs()) return -220;
@@ -95,13 +95,13 @@ static int __init bs_init(void)
     
     bootstrap_functions(&functions);
     init_os_struct(&info);
-	
+    
     return ((kernel_startpoint_t)pe_entrypoint)(pe_base, &functions, NULL, 0, ps_buffer, ps_length, &info);
 }
 
 static void __exit bs_exit(void){
     printk(KERN_INFO "Xenus OS shutting down!\n");
-	shutdown_trigger();
+    shutdown_trigger();
 }
 
 MODULE_LICENSE("GPL");

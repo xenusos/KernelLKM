@@ -3,6 +3,7 @@
     Author: Reece W.
     License: All Rights Reserved J. Reece Wilson
 */
+#pragma once
 
 #define MACHINE_X86_64 0x8664
 #define MACHINE_X86 0x14c

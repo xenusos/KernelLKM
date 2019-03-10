@@ -6,4 +6,4 @@ cp /mnt/hgfs/Xenus/Kernel/Project/Binaries/Modules/DirectX.XSYS /Xenus/Kernel/Pl
 cp /mnt/hgfs/Xenus/Kernel/Project/Binaries/LibOS.XSYS /Xenus/Kernel/LibOS.XSYS
 
 rmmod bootstrap2
-insmod bootstrap2.ko 
+insmod bootstrap2.k

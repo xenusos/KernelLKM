@@ -69,7 +69,7 @@ task_k threading_create_thread_unsafe(thread_callback_t callback, void * data, c
     *(size_t *)(buffer + 0)              = (size_t) callback;
     *(size_t *)(buffer + sizeof(size_t)) = (size_t) data;
     
-	if (run)
+    if (run)
         return (task_k) kthread_run(ms_threading_cb, buffer, name);
     return (task_k) kthread_create(ms_threading_cb, buffer, name);
 }
@@ -91,9 +91,9 @@ thread_storage_data_p  threading_tls(void)
 
 void threading_preempt_enable(void)
 {
-	barrier();
-	if (unlikely(preempt_count_dec_and_test()))
-		__preempt_schedule();
+    barrier();
+    if (unlikely(preempt_count_dec_and_test()))
+        __preempt_schedule();
 }
 
 void threading_preempt_disable(void)
@@ -146,7 +146,7 @@ void *  mem_execalloc(size_t size)
 
 uint64_t  linux_page_to_pfn(void * aa)
 {
-	return page_to_pfn((struct page*)aa);
+    return page_to_pfn((struct page*)aa);
 }
 
 void init_memory(bootstrap_t * functions)
@@ -164,7 +164,7 @@ void init_memory(bootstrap_t * functions)
     functions->memory.memcmp        = memcmp;     
     functions->memory.memscan       = memscan;  
     functions->memory.linux_page_to_pfn       = linux_page_to_pfn;  
-	
+    
 }
 
 void init_strings(bootstrap_t * functions)
@@ -214,15 +214,15 @@ void dbg_panic(const char * msg)
 
 void test_function(size_t a_1, size_t a_2, size_t a_3, size_t a_4, size_t a_5, size_t a_6, size_t a_7, size_t a_8, size_t a_9, size_t a_10, size_t a_11, size_t a_12)
 {
-	if (a_1 == 69)
-		((void *(*)(size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t))a_2)(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
-	else
-		printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n", a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
+    if (a_1 == 69)
+        ((void *(*)(size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t, size_t))a_2)(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+    else
+        printk("Microsoft to SystemV test (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i) \n", a_1, a_2, a_3, a_4, a_5, a_6, a_7, a_8, a_9, a_10, a_11, a_12);
 }
 
 void dbg_on_reload(void(XENUS_MS_ABI * callback)(void))
 {
-	shutdown_set_handler(callback);
+    shutdown_set_handler(callback);
 }
 
 void init_dbg(bootstrap_t * functions)
@@ -230,7 +230,7 @@ void init_dbg(bootstrap_t * functions)
     functions->dbg.test_function = test_function;
     functions->dbg.panic         = dbg_panic; //= panic;
     functions->dbg.print         = dbg_print;
-	functions->dbg.reload        = dbg_on_reload;
+    functions->dbg.reload        = dbg_on_reload;
 }
 
 void init_symbols(bootstrap_t * functions)

@@ -37,7 +37,7 @@ void * file_open(const char *path, int flags, int rights)
 {
     int err = 0;
     struct file *filp = NULL;
-	
+    
     filp = filp_open(path, flags, rights);
 
     if (IS_ERR(filp)) {
@@ -55,13 +55,13 @@ long file_length(const char *path)
 
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
-	
+    
     if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
     }
-	
+    
     filp_close(f, 0);
     
     return stat.size;
@@ -74,13 +74,13 @@ long  file_mode(const char * path)
 
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
-	
+    
     if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
     }
-	
+    
     filp_close(f, 0);
     
     return stat.mode;
@@ -93,13 +93,13 @@ unsigned long long  file_ct(const char * path)
 
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
-	
+    
     if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
     }
-	
+    
     filp_close(f, 0);
     
     return to_milliseconds(stat.ctime);
@@ -112,13 +112,13 @@ unsigned long long  file_mt(const char * path)
 
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
-	
+    
     if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
     }
-	
+    
     filp_close(f, 0);
     
     return to_milliseconds(stat.mtime);
@@ -131,15 +131,15 @@ unsigned long long  file_at(const char * path)
 
     if (IS_ERR(f = filp_open(path, O_RDONLY, 0)))
         return -1;
-	
+    
     if ((vfs_getattr(&f->f_path, &stat, STATX_ALL, KSTAT_QUERY_FLAGS)) != 0)
     {
         filp_close(f, 0);
         return -1;
     }
-	
+    
     filp_close(f, 0);
-		
+        
     return to_milliseconds(stat.atime);
 }
 
