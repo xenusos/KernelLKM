@@ -146,24 +146,30 @@ void *  mem_execalloc(size_t size)
 
 uint64_t  linux_page_to_pfn(void * aa)
 {
-    return page_to_pfn((struct page*)aa);
+    return page_to_pfn((struct page *)aa);
+}
+
+void * linux_pfn_to_page(uint64_t pfn)
+{
+    return pfn_to_page(pfn);
 }
 
 void init_memory(bootstrap_t * functions)
-{       
-    functions->memory.execalloc     = mem_execalloc;  
-    functions->memory.execfree      = vfree;   
-    functions->memory.kmalloc       = kmalloc;   
-    functions->memory.vmalloc       = vmalloc; 
-    functions->memory.kfree         = kfree;     
-    functions->memory.vfree         = vfree;    
-    functions->memory.ksize         = ksize;    
-    functions->memory.memcpy        = memcpy;      
-    functions->memory.memset        = memset;     
-    functions->memory.memmove       = memmove;    
-    functions->memory.memcmp        = memcmp;     
-    functions->memory.memscan       = memscan;  
-    functions->memory.linux_page_to_pfn       = linux_page_to_pfn;  
+{                                           
+    functions->memory.execalloc             = mem_execalloc;  
+    functions->memory.execfree              = vfree;   
+    functions->memory.kmalloc               = kmalloc;   
+    functions->memory.vmalloc               = vmalloc; 
+    functions->memory.kfree                 = kfree;     
+    functions->memory.vfree                 = vfree;    
+    functions->memory.ksize                 = ksize;    
+    functions->memory.memcpy                = memcpy;      
+    functions->memory.memset                = memset;     
+    functions->memory.memmove               = memmove;    
+    functions->memory.memcmp                = memcmp;     
+    functions->memory.memscan               = memscan;  
+    functions->memory.linux_page_to_pfn     = linux_page_to_pfn;  
+    functions->memory.linux_pfn_to_page     = linux_pfn_to_page;  
     
 }
 
