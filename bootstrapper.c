@@ -18,26 +18,59 @@
 #include "bootstrapper.h"
 #include "shutdown.h"
 
+struct xenus_mutex
+{
+    struct mutex mutex;
+    atomic_t users;
+};
+
 mutex_k threading_create_mutex (void)
 {
-    struct mutex * minst = (struct mutex *) kmalloc(sizeof(struct mutex), GFP_ATOMIC);
-    if (!minst)
+    struct xenus_mutex * xmutex = (struct xenus_mutex *) kmalloc(sizeof(struct xenus_mutex),GFP_ATOMIC);
+    
+    if (!xmutex)
         panic("Xenus kernel requested mutex, Linux said no.");
-    mutex_init(minst);
-    return (mutex_k) minst;
+    
+    atomic_set(&xmutex->users, 0);
+    mutex_init(&xmutex->mutex);
+    
+    return (mutex_k) xmutex;
 }
 
-void threading_mutex_destroy(mutex_k mutex)
+// fun linux bug that nobody can be arsed to fix
+// https://lwn.net/Articles/575477/
+// https://lwn.net/Articles/575460/
+// my favourite kind of bug
+//
+// how ironic
+// mutexes, the overseers of atomic deallocation operations, don't reference count themselves allowing for self-dellocation in the middle of an unlock operation
+// tl;dr a very slow thread could be in mutex_unlock after mutex_destroy has been called from the unlocker of said thread 
+
+void threading_mutex_destroy(mutex_k * mutex_)
 {
-    mutex_destroy(mutex);
+    struct xenus_mutex * mutex = (struct xenus_mutex *)mutex_;
+    
+    while (atomic_read(&mutex->users))
+        continue;
+    
+    mutex_destroy(&mutex->mutex);
     kfree(mutex);
+}
+
+void threading_mutex_unlock(mutex_k * mutex_)
+{
+    struct xenus_mutex * mutex = (struct xenus_mutex *)mutex_;
+    
+    atomic_add(1, &mutex->users);
+    mutex_unlock(&mutex->mutex);
+    atomic_sub(1, &mutex->users);
 }
 
 void init_mutex(bootstrap_t * functions)
 {
     functions->mutex.mutex_init         = threading_create_mutex;
     functions->mutex.mutex_lock         = mutex_lock;
-    functions->mutex.mutex_unlock       = mutex_unlock;
+    functions->mutex.mutex_unlock       = threading_mutex_unlock;
     functions->mutex.mutex_trylock      = mutex_trylock;
     functions->mutex.mutex_destroy      = threading_mutex_destroy;
     functions->mutex.mutex_is_locked    = mutex_is_locked;
