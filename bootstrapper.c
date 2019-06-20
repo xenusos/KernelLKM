@@ -20,7 +20,7 @@
 
 mutex_k threading_create_mutex (void)
 {
-    struct mutex * minst = (struct mutex *) kmalloc(sizeof(struct mutex), GFP_KERNEL | GFP_ATOMIC);
+    struct mutex * minst = (struct mutex *) kmalloc(sizeof(struct mutex), GFP_ATOMIC);
     if (!minst)
         panic("Xenus kernel requested mutex, Linux said no.");
     mutex_init(minst);
@@ -57,6 +57,7 @@ int ms_threading_cb(void *tdata)
     kfree(tdata);
     return callback(data);
 }
+
 task_k threading_create_thread_unsafe(thread_callback_t callback, void * data, const char * name, bool run)
 {
     char * buffer;
@@ -64,7 +65,10 @@ task_k threading_create_thread_unsafe(thread_callback_t callback, void * data, c
     if (!callback)
         return NULL;
     
-    buffer = (char *) kmalloc(sizeof(size_t) * 2, GFP_KERNEL);
+    buffer = (char *) kmalloc(sizeof(size_t) * 2, GFP_ATOMIC);
+    
+    if (!buffer)
+        return NULL;
     
     *(size_t *)(buffer + 0)              = (size_t) callback;
     *(size_t *)(buffer + sizeof(size_t)) = (size_t) data;

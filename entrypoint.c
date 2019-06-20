@@ -32,7 +32,7 @@ static bool test_kern_types(void)
 static int init_portable_structs(void)
 {
     ps_length = ps_buffer_length();
-    ps_buffer = kmalloc(ps_length, GFP_KERNEL | GFP_ATOMIC);
+    ps_buffer = kmalloc(ps_length, GFP_KERNEL);
     
     if (!ps_buffer) 
     {
@@ -60,7 +60,7 @@ static int init_pe(void)
     }
     
     length = file_length(BOOTSTRAP_DLL);
-    buffer = kmalloc(length, GFP_KERNEL | GFP_ATOMIC);
+    buffer = kmalloc(length, GFP_KERNEL);
     
     if (file_read(file, 0, buffer, length) != length)
     {
@@ -87,9 +87,14 @@ static int __init bs_init(void)
     bootstrap_t functions;
     linux_info_t info;
     
-    if (!test_kern_types()) return -210;
-    if (init_portable_structs()) return -220;
-    if (init_pe()) return -230;
+    if (!test_kern_types()) 
+        return -210;
+    
+    if (init_portable_structs()) 
+        return -220;
+    
+    if (init_pe()) 
+        return -230;
     
     printk(KERN_INFO "Xenus starting up...\n");
     

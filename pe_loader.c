@@ -19,7 +19,6 @@
 #define MAKELONG(low,hi) ((uint32_t)(((uint16_t)(low))|(((uint32_t)((uint16_t)(hi)))<<16)))
 #define MAKEWORD(low,hi) ((uint16_t)(((uint8_t)(low))|(((uint16_t)((uint8_t)(hi)))<<8)))
 
-
 #define RVA(type, off) (type)((uint64_t)baddr + off) 
     
 static void relocate_kern(
@@ -31,24 +30,23 @@ static void relocate_kern(
     size_t items;
     uint16_t * map;
     size_t i;
+    size_t datadircnt = 0;
     IMAGE_DATA_DIRECTORY dir;
     IMAGE_BASE_RELOCATION *base_relocation;
     
     dir = ntheader->OptionalHeader64.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];
 
-    if (!(dir.Size)) return;
+    if (!(dir.Size)) 
+        return;
     
     base_relocation = RVA(PIMAGE_BASE_RELOCATION, dir.VirtualAddress);
     
-    size_t datadircnt = 0;
     while (base_relocation->SizeOfBlock) 
     {
-        map = (uint16_t *)(((uint64_t)(base_relocation)) + sizeof(IMAGE_BASE_RELOCATION)); 
+        map   = (uint16_t *)(((uint64_t)(base_relocation)) + sizeof(IMAGE_BASE_RELOCATION)); 
         items = (base_relocation->SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(IMAGE_RELOC);
-        base = RVA(size_t, base_relocation->VirtualAddress);
+        base  = RVA(size_t, base_relocation->VirtualAddress);
 
-        // https://github.com/abhisek/Pe-Loader-Sample/blob/master/src/PeLdr.cpp
-        // TODO: rewrite
         for (i = 0; i < items; i++) 
         {
             IMAGE_RELOC reloc;
@@ -56,7 +54,7 @@ static void relocate_kern(
             switch (reloc.type) 
             {
             case IMAGE_REL_BASED_DIR64:
-                *((size_t *)    (base + reloc.offset)) += difference;
+                *((uint64_t *)    (base + reloc.offset)) += difference;
                 break;
             case IMAGE_REL_BASED_HIGHLOW:
                 *((uint32_t *)    (base + reloc.offset)) += (uint32_t) difference;
@@ -75,14 +73,31 @@ static void relocate_kern(
             }
         }
         
-        datadircnt += base_relocation->SizeOfBlock;
         base_relocation = (PIMAGE_BASE_RELOCATION)(((size_t)base_relocation) + base_relocation->SizeOfBlock);
         
+        datadircnt += base_relocation->SizeOfBlock;
         if (datadircnt == dir.Size)
             break;
     }
 }
+
 #undef RVA
+
+static void load_segments(void * baddr, void * data, PIMAGE_NT_HEADERS ntheader)
+{
+    PIMAGE_SECTION_HEADER sec;
+    size_t sections;
+    int x;
+    
+    sec      = (PIMAGE_SECTION_HEADER)((uint64_t)&ntheader->OptionalHeader64 + ntheader->FileHeader.SizeOfOptionalHeader);
+    sections = ntheader->FileHeader.NumberOfSections;
+    
+    for (x = 0; x < sections; x++)
+        memcpy((void *)((uint64_t)baddr + sec[x].VirtualAddress), (const void *) ((uint64_t)data + sec[x].PointerToRawData), sec[x].SizeOfRawData);
+
+    //TODO: check length
+    //TODO: check within range
+}
 
 void * load_pe(void * data, size_t length, void **entrypoint)
 { 
@@ -91,17 +106,18 @@ void * load_pe(void * data, size_t length, void **entrypoint)
     PDOS_HEADER dheader;
     PIMAGE_NT_HEADERS ntheader;
     uint64_t image_size;
-    int x;
   
-    dheader        = (PDOS_HEADER)data;
-    ntheader    = (PIMAGE_NT_HEADERS)((uint64_t)data + dheader->e_lfanew);
+    dheader      = (PDOS_HEADER)data;
+    ntheader     = (PIMAGE_NT_HEADERS)((uint64_t)data + dheader->e_lfanew);
     
-    image_size    = ntheader->OptionalHeader64.SizeOfImage;
+    image_size   = ntheader->OptionalHeader64.SizeOfImage;
     
-    baddr        = memset(__vmalloc(image_size, GFP_KERNEL, PAGE_KERNEL_EXEC), 0, image_size);
+    baddr        = __vmalloc(image_size, GFP_KERNEL, PAGE_KERNEL_EXEC);
     
     if (!baddr)
         return NULL;
+    
+    memset(baddr, 0, image_size);
     
     //TODO: check pe sig
     //TODO: check mz sig
@@ -119,16 +135,7 @@ void * load_pe(void * data, size_t length, void **entrypoint)
     ntheader->OptionalHeader64.ImageBase = baddr;
     
     //Load sections
-    PIMAGE_SECTION_HEADER sec;
-    size_t sections;
-    
-    sec = (PIMAGE_SECTION_HEADER)((uint64_t)&ntheader->OptionalHeader64 + ntheader->FileHeader.SizeOfOptionalHeader);
-    sections = ntheader->FileHeader.NumberOfSections;
-    for (x = 0; x < sections; x++)
-        memcpy((void *)((uint64_t)baddr + sec[x].VirtualAddress), (const void *) ((uint64_t)data + sec[x].PointerToRawData), sec[x].SizeOfRawData);
-    
-    //TODO: check length
-    //TODO: check within range
+    load_segments(baddr, data, ntheader);
 
     relocate_kern(baddr, ntheader, difference);                                                                                                                ;
    
