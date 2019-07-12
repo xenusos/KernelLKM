@@ -29,7 +29,7 @@ mutex_k threading_create_mutex (void)
     struct xenus_mutex * xmutex = (struct xenus_mutex *) kmalloc(sizeof(struct xenus_mutex),GFP_ATOMIC);
     
     if (!xmutex)
-        panic("Xenus kernel requested mutex, Linux said no.");
+        return NULL;
     
     atomic_set(&xmutex->users, 0);
     mutex_init(&xmutex->mutex);
