@@ -129,6 +129,12 @@ thread_storage_data_p  threading_tls(void)
 void threading_preempt_enable(void)
 {
     barrier();
+    preempt_count_dec_and_test();
+}
+
+void threading_preempt_enable_reseched(void)
+{
+    barrier();
     if (unlikely(preempt_count_dec_and_test()))
         __preempt_schedule();
 }
@@ -173,6 +179,7 @@ void init_cpu(bootstrap_t * functions)
     functions->cpu._current                 = threading__current;
     functions->cpu.tls                      = threading_tls;
     functions->cpu.preempt_enable           = threading_preempt_enable;
+    functions->cpu.preempt_enable_reseched  = threading_preempt_enable_reseched;
     functions->cpu.preempt_disable          = threading_preempt_disable;
 }
 
